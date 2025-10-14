@@ -62,7 +62,7 @@ function Node:setStyle(k, v)
     self.styles[k] = v; return self
 end
 
--- Compute inherited/composed styles
+-- Compute inherited/composed styles (defaults + inline + inherit list)
 local INHERIT = { color = true }
 local function compute_styles(node, parent)
     local def = reg.get(node.tag)

@@ -1,3 +1,4 @@
+-- v0.1: simple mount (no incremental diff yet). Future: keyed diff.
 local layout = require("layout.layout")
 local render = require("render.renderer")
 

@@ -33,15 +33,28 @@ end
 
 function UI.htmlToMini(html) return htmlshim.htmlToMini(html) end
 
+-- VDOM helpers
 function UI.h(tag, props, children) return Node.new(tag, props or {}, children or {}) end
 
+-- NEW: Interactive runner
+-- viewFn(state) -> markup string (or VDOM node)
+-- handlers: { [id]=function(ev, state, rerender) end }
 function UI.run(viewFn, target, handlers, state, opts)
+
+  local dirty = false
+  local function request_rerender()
+    if not dirty then
+      dirty = true
+      os.queueEvent("ui_rerender")
+    end
+  end
+
   state, opts = state or {}, opts or {}
   local dispatch = require("events.dispatch")
 
   local function render_once()
     local view = viewFn(state)
-    local result = UI.render(view, target)
+    local result = UI.render(view, target)  -- collects fresh hits
     if opts.afterRender then opts.afterRender(state, result) end
     return result
   end
@@ -53,9 +66,12 @@ function UI.run(viewFn, target, handlers, state, opts)
   while true do
     local ev, a, b, c = os.pullEvent()
     if ev == "monitor_touch" then
-      dispatch.dispatch(b, c, last.hits, handlers, state, function() last = render_once() end)
+      if a == peripheral.getName(target) then
+        dispatch.dispatch(b, c, last.hits, handlers, state, request_rerender)
+      end
     elseif ev == "mouse_click" then
-      dispatch.dispatch(b, c, last.hits, handlers, state, function() last = render_once() end)
+      dispatch.dispatch(b, c, last.hits, handlers, state, request_rerender)
+      print("mouse_click", b, c)
     elseif ev == "term_resize" then
       last = render_once()
     elseif ev == "timer" and timer and a == timer then
@@ -63,7 +79,10 @@ function UI.run(viewFn, target, handlers, state, opts)
       last = render_once()
       timer = os.startTimer(tick)
     elseif ev == "ui_rerender" then
-      last = render_once()
+      if dirty then
+        last = render_once()
+        dirty = false
+      end
     end
   end
 end

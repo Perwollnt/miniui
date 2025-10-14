@@ -13,6 +13,7 @@ function M.get(tag) return E[tag] end
 
 function M.all() return E end
 
+-- Defaults (similar to old DEFAULTS)
 M.add("col", { defaults = { display = "col", gap = "0", padding = "0" } })
 M.add("row", { defaults = { display = "row", gap = "0", padding = "0" } })
 M.add("box", { defaults = { display = "block", padding = "0" } })

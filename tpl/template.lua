@@ -1,7 +1,12 @@
+-- miniui/tpl/template.lua
 -- Simple Mustache-like text templater with partial imports
 -- Supports: {{var}}, {{#cond}}...{{/cond}}, {{import "path"}}, {{.}}, {{#list}}...{{/list}}
 
 local M = {}
+
+local function escape_pattern(s)
+    return s:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
+end
 
 -- basic variable lookup (supports nested: a.b.c)
 local function lookup(ctx, key)
@@ -64,6 +69,7 @@ function M.render(str, ctx, opts)
     return render(str, ctx or {}, opts or {})
 end
 
+-- shortcut for UI.tpl
 M.tpl = M.render
 
 return M
