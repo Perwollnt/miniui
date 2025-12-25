@@ -223,19 +223,6 @@ Use CC constants by name:
 
 ---
 
-## Example: dual-screen ME dashboard
-
-Your provided demo shows:
-- Data gathered from an ME/AE2 bridge
-- Chest-first item ordering, then filling from ME
-- Two monitors: a list panel and a large vertical gauge
-- Click handler toggling sort and random value
-- Templating for value injection and progress bars
-
-See `demo.lua` and `screen_2.tpl` for a complete reference pattern.
-
----
-
 ## API Reference
 
 ```lua
@@ -257,9 +244,3 @@ UI.requestRerender()
 
 - CC:Tweaked (ComputerCraft) environment
 - For monitors: `peripheral.wrap("monitor_x")` must exist
-
----
-
-## License
-
-MIT (or your preferred license). Add a `LICENSE` file if needed.
