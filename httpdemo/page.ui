@@ -1,0 +1,34 @@
+<col style="padding:1; gap:1; bg:black">
+  {{ import "partials/header.ui" }}
+
+  <box style="padding:1; bg:gray">
+    {{ if online }}
+      <text style="color:lime">Remote status: ONLINE</text>
+    {{ else }}
+      <text style="color:red">Remote status: OFFLINE</text>
+    {{ end }}
+    <text style="color:white">Count: {{count}}</text>
+    <text style="color:yellow">Mode: {{mode}}</text>
+  </box>
+
+  <row style="gap:1">
+    <click on="dec" style="width:33%; padding:1; bg:brown"><text style="color:white">-1</text></click>
+    <click on="inc" style="width:33%; padding:1; bg:green"><text style="color:white">+1</text></click>
+    <click on="toggle" style="width:33%; padding:1; bg:purple"><text style="color:white">Toggle</text></click>
+  </row>
+
+  <box style="padding:1; bg:lightGray">
+    {{ switch mode }}
+    {{ case "ok" }}<text style="color:green">Mode OK.</text>
+    {{ case "warn" }}<text style="color:orange">Mode WARN.</text>
+    {{ default }}<text style="color:red">Mode ERROR.</text>
+    {{ end }}
+  </box>
+
+  <box style="padding:1; bg:gray">
+    <text style="color:lightBlue">Imported items:</text>
+    {{ for i, item in items }}
+      {{ import "partials/item.ui" }}
+    {{ end }}
+  </box>
+</col>

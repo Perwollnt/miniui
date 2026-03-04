@@ -1,0 +1,44 @@
+<col style="padding:1; gap:1; bg:black">
+  <box style="padding:1; bg:blue">
+    <text style="color:white">miniui v2 live demo</text>
+    <text style="color:lightGray">Edit this file in VS Code and save. Screen reloads automatically.</text>
+  </box>
+
+  <box style="padding:1; bg:gray">
+    {{ if online }}
+      <text style="color:lime">Status: ONLINE</text>
+    {{ else }}
+      <text style="color:red">Status: OFFLINE</text>
+    {{ end }}
+    <text style="color:white">Count: {{count}}</text>
+    <text style="color:yellow">Mode: {{mode}}</text>
+  </box>
+
+  <row style="gap:1">
+    <click on="dec" style="width:33%; padding:1; bg:brown"><text style="color:white">-1</text></click>
+    <click on="inc" style="width:33%; padding:1; bg:green"><text style="color:white">+1</text></click>
+    <click on="toggle" style="width:33%; padding:1; bg:purple"><text style="color:white">Toggle</text></click>
+  </row>
+
+  <box style="padding:1; bg:lightGray">
+    {{ switch mode }}
+    {{ case "ok" }}
+      <text style="color:green">Everything nominal.</text>
+    {{ case "warn" }}
+      <text style="color:orange">Warning: something needs attention.</text>
+    {{ default }}
+      <text style="color:red">Error mode active.</text>
+    {{ end }}
+  </box>
+
+  <box style="padding:1; bg:gray">
+    <text style="color:lightBlue">Items</text>
+    {{ for i, item in items }}
+      {{ import "partials/item.ui" }}
+    {{ end }}
+  </box>
+
+  <box style="padding:1; bg:black">
+    <text style="color:lightGray">Hotkeys: [A] add item, [M] cycle mode, [O] online/offline, [Q] quit</text>
+  </box>
+</col>

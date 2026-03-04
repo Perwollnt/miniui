@@ -1,94 +1,81 @@
-package.path = package.path .. ";./miniui/?.lua;./miniui/?/init.lua;./miniui/?/?.lua"
+--[[
+miniui entrypoint (V2-only)
 
-local tpl = require("tpl.template")
-local markup = require("parser.markup")
-local htmlshim = require("parser.html")
-local reconcile = require("vdom.reconcile")
-local Node = require("vdom.node")
-local dispatch = require("events.dispatch")
+Use this file as the public API:
+  local UI = require("ui")
 
+Primary APIs:
+  UI.compile(template_or_source, opts?)
+  UI.render(template_or_compiled, ctx?, opts?)
+  UI.renderFile(path, ctx?, opts?)
+  UI.renderURL(url, ctx?, opts?)
+  UI.runLive(config)
+  UI.benchmark(opts?)
+  UI.printBenchmark(result)
+
+Compatibility:
+  UI.v2 points to the same table for older scripts expecting UI.v2.*
+]]
+
+local function load_local(rel)
+  local roots = {
+    rawget(_G, "__MINIUI_ROOT"),
+    "/miniui",
+    "miniui",
+    ".",
+  }
+  if shell and shell.dir then
+    local d = shell.dir()
+    roots[#roots + 1] = d
+    roots[#roots + 1] = fs.combine(d, "miniui")
+    roots[#roots + 1] = fs.combine(d, "..")
+  end
+  for i = 1, #roots do
+    local r = roots[i]
+    if r and r ~= "" then
+      local p = fs.combine(r, rel)
+      if fs.exists(p) then
+        return dofile(p)
+      end
+    end
+  end
+  error("miniui missing file: " .. tostring(rel))
+end
+
+local Engine = load_local("ui_engine.lua")
+local Bench = nil
 
 local UI = {}
 
-function UI.attach(any) return reconcile.attach(any) end
-
-function UI.tpl(str, ctx, opts) return tpl.tpl(str, ctx, opts) end
-
-function UI.render(markup_or_vdom, target)
-    local root
-    if type(markup_or_vdom) == "table" and markup_or_vdom.tag then
-        root = markup_or_vdom
-    else
-        root = markup.parse_markup(markup_or_vdom)
-    end
-    local out = reconcile.render(root, target)
-    out.hits = dispatch.collect_clicks(out.root)
-    return out
+-- Forward all engine APIs.
+for k, v in pairs(Engine) do
+  UI[k] = v
 end
 
-function UI.renderFile(path, target)
-    local f = fs.open(path, "r"); if not f then error("No such file: " .. tostring(path)) end
-    local s = f.readAll(); f.close(); return UI.render(s, target)
-end
-
-function UI.htmlToMini(html) return htmlshim.htmlToMini(html) end
-
--- VDOM helpers
-function UI.h(tag, props, children) return Node.new(tag, props or {}, children or {}) end
-
--- NEW: Interactive runner
--- viewFn(state) -> markup string (or VDOM node)
--- handlers: { [id]=function(ev, state, rerender) end }
-function UI.run(viewFn, target, handlers, state, opts)
-
-  local dirty = false
-  local function request_rerender()
-    if not dirty then
-      dirty = true
-      os.queueEvent("ui_rerender")
-    end
+function UI.benchmark(opts)
+  if not Bench then
+    Bench = load_local("benchmark.lua")
   end
-
-  state, opts = state or {}, opts or {}
-  local dispatch = require("events.dispatch")
-
-  local function render_once()
-    local view = viewFn(state)
-    local result = UI.render(view, target)  -- collects fresh hits
-    if opts.afterRender then opts.afterRender(state, result) end
-    return result
-  end
-
-  local last = render_once()
-  local tick = tonumber(opts.tick)
-  local timer = tick and os.startTimer(tick) or nil
-
-  while true do
-    local ev, a, b, c = os.pullEvent()
-    if ev == "monitor_touch" then
-      if a == peripheral.getName(target) then
-        dispatch.dispatch(b, c, last.hits, handlers, state, request_rerender)
-      end
-    elseif ev == "mouse_click" then
-      dispatch.dispatch(b, c, last.hits, handlers, state, request_rerender)
-      print("mouse_click", b, c)
-    elseif ev == "term_resize" then
-      last = render_once()
-    elseif ev == "timer" and timer and a == timer then
-      if opts.onTick then opts.onTick(state) end
-      last = render_once()
-      timer = os.startTimer(tick)
-    elseif ev == "ui_rerender" then
-      if dirty then
-        last = render_once()
-        dirty = false
-      end
-    end
-  end
+  return Bench.run(opts or {})
 end
 
-function UI.requestRerender()
-  os.queueEvent("ui_rerender")
+function UI.printBenchmark(result)
+  if not result then
+    print("[benchmark] no result")
+    return
+  end
+  print("mode:", result.mode)
+  print("iterations:", result.iterations)
+  print(("total: %.4fs"):format(result.total_s or 0))
+  print(("avg: %.3fms/render"):format(result.avg_ms or 0))
+  print(("mem: %.2fKB -> %.2fKB (delta %.2fKB)"):format(
+    result.mem_before_kb or 0,
+    result.mem_after_kb or 0,
+    result.mem_delta_kb or 0
+  ))
 end
+
+-- Legacy bridge: old callers use UI.v2.*
+UI.v2 = UI
 
 return UI

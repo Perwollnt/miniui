@@ -1,0 +1,4 @@
+<row style="gap:1">
+  <text style="color:yellow">#{{i}}</text>
+  <text style="color:white">{{item.name}} x{{item.qty}}</text>
+</row>

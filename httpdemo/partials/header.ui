@@ -1,0 +1,4 @@
+<box style="padding:1; bg:blue">
+  <text style="color:white">miniui HTTP template demo</text>
+  <text style="color:lightGray">Edit files in httpdemo/, save, and watcher rerenders.</text>
+</box>
