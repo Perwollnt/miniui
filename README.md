@@ -1,5 +1,15 @@
 # miniui v2 (standalone)
 
+## Screenshots
+### Storage Demo (Screen 1)
+![Storage demo screen 1](img/demo_screen_1.png)
+
+### Storage Demo (Screen 2)
+![Storage demo screen 2](img/demo_screen_2.png)
+
+### Installer
+![Installer screen](img/installer_screen.png)
+
 ## Status
 - Standalone from v1 runtime modules.
 - Supports:
