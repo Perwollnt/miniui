@@ -1,0 +1,4 @@
+<row style="gap:1">
+  <text style="color:{{item.color}}">{{item.name}}</text>
+  <text style="color:lightGray">x{{item.qty}}</text>
+</row>

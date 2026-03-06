@@ -1,0 +1,4 @@
+<row style="gap:1">
+  <text style="color:orange">{{gas.name}}</text>
+  <text style="color:lightGray">x{{gas.qty}}</text>
+</row>

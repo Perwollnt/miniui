@@ -21,13 +21,19 @@ function M.collect_clicks(root)
   return hits
 end
 
-function M.dispatch(x, y, hits, handlers, state, rerender)
+function M.dispatch(x, y, hits, handlers, state, rerender, meta)
   for i = #hits, 1, -1 do
     local h = hits[i]
     if within(x, y, h.rect) then
       local fn = h.on and handlers and handlers[h.on]
       if type(fn) == "function" then
-        fn({ x = x, y = y, node = h.node }, state, rerender)
+        local payload = { x = x, y = y, node = h.node }
+        if type(meta) == "table" then
+          for k, v in pairs(meta) do
+            payload[k] = v
+          end
+        end
+        fn(payload, state, rerender)
         return true
       end
     end

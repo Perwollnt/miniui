@@ -1,0 +1,4 @@
+<row style="gap:1">
+  <text style="color:cyan">{{fluid.name}}</text>
+  <text style="color:lightGray">x{{fluid.qty}}</text>
+</row>

@@ -262,11 +262,11 @@ function M.new(opts)
         local hits = last_frame and last_frame.hits
         if ev == "monitor_touch" then
           if hits and monitor_matches_target(target, a) then
-            dispatch.dispatch(b, c, hits, handlers, st, request_rerender)
+            dispatch.dispatch(b, c, hits, handlers, st, request_rerender, { side = a })
           end
         elseif ev == "mouse_click" then
           if hits then
-            dispatch.dispatch(b, c, hits, handlers, st, request_rerender)
+            dispatch.dispatch(b, c, hits, handlers, st, request_rerender, { button = a })
           end
         elseif cfg.onEvent then
           cfg.onEvent(ev, a, b, c, last_frame, st, request_rerender)
@@ -375,11 +375,11 @@ function M.runLive(cfg)
       local hits = last_frame and last_frame.hits
       if ev == "monitor_touch" then
         if hits and monitor_matches_target(target, a) then
-          dispatch.dispatch(b, c, hits, handlers, st, request_rerender)
+          dispatch.dispatch(b, c, hits, handlers, st, request_rerender, { side = a })
         end
       elseif ev == "mouse_click" then
         if hits then
-          dispatch.dispatch(b, c, hits, handlers, st, request_rerender)
+          dispatch.dispatch(b, c, hits, handlers, st, request_rerender, { button = a })
         end
       elseif cfg.onEvent then
         cfg.onEvent(ev, a, b, c, last_frame, st, request_rerender)

@@ -1,0 +1,81 @@
+<col style="padding:1; gap:1; bg:black">
+  <box style="padding:1; bg:gray">
+    {{ if compact }}
+      <text style="color:white">Storage Demo</text>
+    {{ else }}
+      <text style="color:white">Storage Display Demo</text>
+    {{ end }}
+    <text style="color:lightGray">{{storage_name}}</text>
+    <text style="color:lightGray">Storage {{storage_idx}} / {{storage_count}}</text>
+  </box>
+
+  <box style="padding:1; bg:gray">
+    {{ if compact }}
+      <text style="color:white">I {{item_pct}}% {{item_used}}/{{item_capacity}}</text>
+    {{ else }}
+      <text style="color:white">Items: {{item_used}} / {{item_capacity}} ({{item_pct}}%)</text>
+    {{ end }}
+    <box style="height:1; bg:lightGray">
+      <box style="height:1; width:{{item_pct}}%; bg:white"></box>
+    </box>
+    <box style="height:1; bg:gray"></box>
+    {{ if compact }}
+      <text style="color:white">F {{fluid_pct}}% {{fluid_used}}/{{fluid_capacity}}</text>
+    {{ else }}
+      <text style="color:white">Fluids: {{fluid_used}} / {{fluid_capacity}} ({{fluid_pct}}%)</text>
+    {{ end }}
+    <box style="height:1; bg:lightGray">
+      <box style="height:1; width:{{fluid_pct}}%; bg:cyan"></box>
+    </box>
+    <box style="height:1; bg:gray"></box>
+    {{ if compact }}
+      <text style="color:white">G {{gas_pct}}% {{gas_used}}/{{gas_capacity}}</text>
+    {{ else }}
+      <text style="color:white">Gases: {{gas_used}} / {{gas_capacity}} ({{gas_pct}}%)</text>
+    {{ end }}
+    <box style="height:1; bg:lightGray">
+      <box style="height:1; width:{{gas_pct}}%; bg:orange"></box>
+    </box>
+    <box style="height:1; bg:gray"></box>
+  </box>
+
+  <click on="toggle_sort" style="width:100%; padding:1; height:{{item_panel_h}}; bg:gray">
+    {{ if sort_mode == "abc" }}
+      <text style="color:white">Items In Storage (A-Z)</text>
+    {{ else }}
+      <text style="color:white">Items In Storage (By Amount)</text>
+    {{ end }}
+    {{ for i, item in items }}
+      {{ import "partials/storage_item.ui" }}
+    {{ end }}
+    {{ if hidden_items > 0 }}
+      <text style="color:lightGray">+{{hidden_items}} more items...</text>
+    {{ end }}
+    {{ for i, line in item_spacer_lines }}
+      <text style="color:gray"> </text>
+    {{ end }}
+    {{ if compact }}
+      <text style="color:lightGray">Right-click or tap: toggle sort</text>
+      <text style="color:lightGray">Legend W=item C=fluid O=gas</text>
+    {{ else }}
+      <text style="color:lightGray">Right-click (terminal) or tap (monitor) this panel to switch amount / A-Z sorting.</text>
+      <text style="color:lightGray">Legend: white=item, cyan=fluid, orange=gas</text>
+    {{ end }}
+  </click>
+
+  <row style="gap:1">
+    <click on="prev_storage" style="width:33%; height:2; bg:gray">
+      <text style="color:white">< Prev</text>
+    </click>
+    <click on="refresh" style="width:33%; height:2; bg:gray">
+      <text style="color:white">R Refresh</text>
+    </click>
+    <click on="next_storage" style="width:33%; height:2; bg:gray">
+      <text style="color:white">Next ></text>
+    </click>
+  </row>
+
+  <box style="bg:black">
+    <text style="color:lightGray">tap < R > to control</text>
+  </box>
+</col>
